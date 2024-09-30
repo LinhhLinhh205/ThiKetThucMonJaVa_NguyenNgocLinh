@@ -5,6 +5,7 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -16,7 +17,7 @@ import model.KhachHang;
 
 /**
  *
- * Họ tên sinh viên: 
+ * Họ tên sinh viên: Nguyễn Ngọc Linh
  */
 public class FrmQLKhachHang extends JFrame {
 
@@ -36,6 +37,7 @@ public class FrmQLKhachHang extends JFrame {
     public FrmQLKhachHang(String title) {
         super(title);
         createGUI();
+        createEvent();
         pack();
         //setSize(900, 500);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -82,4 +84,38 @@ public class FrmQLKhachHang extends JFrame {
         add(p2, BorderLayout.SOUTH);
 
     } 
+
+    private void createEvent() {
+       btDocFile.addActionListener((e)->{
+           qlkh.DocKhachHang(FILE_NHAP);
+           String tieuthucaonhat=String.valueOf(qlkh.getTieuThuCaoNhat());
+           txtMax.setText(tieuthucaonhat);
+           
+           String tieuthutrungbinh=String.valueOf(qlkh.getTieuThuTrungBinh());
+           txtTB.setText(tieuthutrungbinh);
+           LoadDataToTable();
+       });
+       chkSapXep.addActionListener((e)->{
+           if(chkSapXep.isSelected()){
+               qlkh.sapXepTheoMucTieuThu();
+               LoadDataToTable();
+           }
+       });
+       btGhiFile.addActionListener((e)->{
+           if(qlkh.GhiHoaDon(FILE_XUAT)){
+               JOptionPane.showMessageDialog(this, "Xuất hoá đơn thành công!","Thông báo",JOptionPane.INFORMATION_MESSAGE);
+           }else{
+               JOptionPane.showMessageDialog(this, "Xuất hoá đơn thất bại!","Thông báo",JOptionPane.ERROR_MESSAGE);
+           }
+       });
+}
+
+    private void LoadDataToTable() {
+        model.setRowCount(0);
+        
+        for (KhachHang kh : qlkh.getDsKhachHang()) {
+            String vuotDinhMuc = kh.getTieuThu() > kh.getDinhMuc() ? "X" : "";
+            model.addRow(new Object[]{kh.getMaso(),kh.getHoten(),kh.getSonhankhau(),kh.getChisocu(),kh.getChisomoi(),kh.getTieuThu(),vuotDinhMuc,kh.tinhTienTra()});
+        }
+    }
 }
